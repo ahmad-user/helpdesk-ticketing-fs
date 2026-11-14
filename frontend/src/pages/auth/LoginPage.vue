@@ -2,9 +2,7 @@
   <div>
     <!-- Form Heading -->
     <div class="auth-page-heading mb-6">
-      <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
-        Sign in to your account
-      </h2>
+      <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">Sign in to your account</h2>
       <p class="mt-1 text-xs sm:text-sm text-slate-500">
         Enter your enterprise credentials to access your support workspace.
       </p>
@@ -120,9 +118,7 @@
       <!-- Quick Demo Account Credentials Picker -->
       <div class="auth-demo mt-6 pt-5 border-t border-slate-100">
         <div class="flex items-center justify-between mb-2.5">
-          <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-            Fast Demo Login
-          </p>
+          <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Quick Test Access</p>
           <span class="text-[10px] text-slate-400">Click to autofill</span>
         </div>
         <div class="grid grid-cols-3 gap-2">
@@ -157,94 +153,94 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { Mail, Lock, Eye, EyeOff, AlertCircle, X } from 'lucide-vue-next'
-import BaseInput from '@/components/common/BaseInput.vue'
-import BaseButton from '@/components/common/BaseButton.vue'
-import { useAuthStore } from '@/stores/auth'
-import { useNotification } from '@/composables/useNotification'
+import { ref, reactive } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { Mail, Lock, Eye, EyeOff, AlertCircle, X } from "lucide-vue-next";
+import BaseInput from "@/components/common/BaseInput.vue";
+import BaseButton from "@/components/common/BaseButton.vue";
+import { useAuthStore } from "@/stores/auth";
+import { useNotification } from "@/composables/useNotification";
 
-const router = useRouter()
-const route = useRoute()
-const authStore = useAuthStore()
-const { success } = useNotification()
+const router = useRouter();
+const route = useRoute();
+const authStore = useAuthStore();
+const { success } = useNotification();
 
-const showPassword = ref(false)
-const isSubmitting = ref(false)
-const rememberMe = ref(true)
-const errorMessage = ref('')
+const showPassword = ref(false);
+const isSubmitting = ref(false);
+const rememberMe = ref(true);
+const errorMessage = ref("");
 
 const form = reactive({
-  email: '',
-  password: ''
-})
+  email: "",
+  password: "",
+});
 
 const errors = reactive({
-  email: '',
-  password: ''
-})
+  email: "",
+  password: "",
+});
 
 function fillDemo(email, password) {
-  form.email = email
-  form.password = password
-  errors.email = ''
-  errors.password = ''
-  errorMessage.value = ''
+  form.email = email;
+  form.password = password;
+  errors.email = "";
+  errors.password = "";
+  errorMessage.value = "";
 }
 
 function validateForm() {
-  let isValid = true
-  errors.email = ''
-  errors.password = ''
+  let isValid = true;
+  errors.email = "";
+  errors.password = "";
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!form.email.trim()) {
-    errors.email = 'Email address is required'
-    isValid = false
+    errors.email = "Email address is required";
+    isValid = false;
   } else if (!emailRegex.test(form.email.trim())) {
-    errors.email = 'Please enter a valid email address'
-    isValid = false
+    errors.email = "Please enter a valid email address";
+    isValid = false;
   }
 
   if (!form.password) {
-    errors.password = 'Password is required'
-    isValid = false
+    errors.password = "Password is required";
+    isValid = false;
   }
 
-  return isValid
+  return isValid;
 }
 
 async function handleLogin() {
-  if (isSubmitting.value) return
-  errorMessage.value = ''
+  if (isSubmitting.value) return;
+  errorMessage.value = "";
 
   if (!validateForm()) {
-    return
+    return;
   }
 
-  isSubmitting.value = true
+  isSubmitting.value = true;
 
   try {
     const authData = await authStore.login({
       email: form.email.trim(),
-      password: form.password
-    })
+      password: form.password,
+    });
 
-    success(`Welcome back, ${authData.user.name || 'User'}!`)
+    success(`Welcome back, ${authData.user.name || "User"}!`);
 
     // Redirect to originally requested protected route or fallback to dashboard
-    const redirectPath = route.query.redirect || '/dashboard'
-    router.push(redirectPath)
+    const redirectPath = route.query.redirect || "/dashboard";
+    router.push(redirectPath);
   } catch (err) {
-    errorMessage.value = err.message || 'Invalid credentials. Please verify your email and password.'
+    errorMessage.value = err.message || "Invalid credentials. Please verify your email and password.";
 
     if (err.fieldErrors) {
-      if (err.fieldErrors.email) errors.email = err.fieldErrors.email
-      if (err.fieldErrors.password) errors.password = err.fieldErrors.password
+      if (err.fieldErrors.email) errors.email = err.fieldErrors.email;
+      if (err.fieldErrors.password) errors.password = err.fieldErrors.password;
     }
   } finally {
-    isSubmitting.value = false
+    isSubmitting.value = false;
   }
 }
 </script>
