@@ -1,0 +1,145 @@
+# Helpdesk Ticketing System API
+# Base URL
+@baseUrl = http://localhost:8080
+
+# Tokens - isi setelah login
+@adminToken = 
+@agentToken = 
+@requesterToken = 
+
+# IDs - isi dari response API
+@ticketId = 
+@userId = 
+
+### 1. Health Check
+GET {{baseUrl}}/health
+
+### 2. Register Requester
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Test Requester",
+  "email": "test.requester@example.com",
+  "password": "Password123!"
+}
+
+### 3. Login Admin
+# Demo account dari README
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "Admin123!"
+}
+
+### 4. Login Agent
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "agent@example.com",
+  "password": "Agent123!"
+}
+
+### 5. Login Requester
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "requester@example.com",
+  "password": "Requester123!"
+}
+
+### 6. Get Current User - Requester
+GET {{baseUrl}}/api/me
+Authorization: Bearer {{requesterToken}}
+
+### 7. Get Tickets - Requester
+GET {{baseUrl}}/api/tickets?page=1&limit=10
+Authorization: Bearer {{requesterToken}}
+
+### 8. Create Ticket - Requester
+POST {{baseUrl}}/api/tickets
+Authorization: Bearer {{requesterToken}}
+Content-Type: application/json
+
+{
+  "title": "Cannot connect to office WiFi",
+  "description": "My laptop cannot connect to the office WiFi network.",
+  "category": "Network",
+  "priority": "high"
+}
+
+### 9. Get Ticket Detail
+GET {{baseUrl}}/api/tickets/{{ticketId}}
+Authorization: Bearer {{requesterToken}}
+
+### 10. Get Tickets - Agent
+GET {{baseUrl}}/api/tickets?page=1&limit=10&sort_by=created_at&order=desc
+Authorization: Bearer {{agentToken}}
+
+### 11. Assign Ticket / Update Ticket - Agent
+PATCH {{baseUrl}}/api/tickets/{{ticketId}}
+Authorization: Bearer {{agentToken}}
+Content-Type: application/json
+
+{
+  "status": "in_progress"
+}
+
+### 12. Resolve Ticket - Agent
+PATCH {{baseUrl}}/api/tickets/{{ticketId}}
+Authorization: Bearer {{agentToken}}
+Content-Type: application/json
+
+{
+  "status": "resolved"
+}
+
+### 13. Get Ticket Comments
+GET {{baseUrl}}/api/tickets/{{ticketId}}/comments
+Authorization: Bearer {{agentToken}}
+
+### 14. Add Public Comment - Agent
+POST {{baseUrl}}/api/tickets/{{ticketId}}/comments
+Authorization: Bearer {{agentToken}}
+Content-Type: application/json
+
+{
+  "body": "We are investigating this issue.",
+  "is_internal": false
+}
+
+### 15. Add Internal Note - Agent
+POST {{baseUrl}}/api/tickets/{{ticketId}}/comments
+Authorization: Bearer {{agentToken}}
+Content-Type: application/json
+
+{
+  "body": "Internal investigation note for support team.",
+  "is_internal": true
+}
+
+### 16. List Users - Admin
+GET {{baseUrl}}/api/users?page=1&limit=10
+Authorization: Bearer {{adminToken}}
+
+### 17. Update User Role - Admin
+PATCH {{baseUrl}}/api/users/{{userId}}/role
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "role": "agent"
+}
+
+### 18. Close Ticket - Requester
+PATCH {{baseUrl}}/api/tickets/{{ticketId}}
+Authorization: Bearer {{requesterToken}}
+Content-Type: application/json
+
+{
+  "status": "closed"
+}
