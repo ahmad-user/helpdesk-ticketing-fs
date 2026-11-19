@@ -41,9 +41,12 @@ Configure the required environment variables, especially `JWT_SECRET`.
 
 3. Start the application:
 
+````bash
+sudo docker compose --env-file .env.docker up -d
+
 ```bash
 docker compose up --build
-```
+````
 
 ## Application Access
 
